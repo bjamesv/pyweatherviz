@@ -183,12 +183,21 @@ COOP:205567,MONTAGUE 4 NW MI US,20130529 00:30,158,10
 COOP:205567,MONTAGUE 4 NW MI US,20130601 00:00,158,-9999
 COOP:205567,MONTAGUE 4 NW MI US,20130601 00:15,-9999,0"""
 
+#per: ftp://ftp.ncdc.noaa.gov/pub/data/cdo/documentation/PRECIP_15_documentation.doc
+"""
+QPCP: The amount of precipitation recorded at the station for the 15 minute period ending at the time specified for DATE above given in tenths or hundredths of inches depending on the value given in the Units element (see definition for Units below). Prior to January 1996 QPCP was the only observational element in this data set. The values 9999 or 99999 means the data value is missing. The maximum number of characters for this field is 8. This element is selectable when using the Climate Data Online interface for creating data output file.
+
+QGAG: The volume of precipitation (calculated by weight) accumulated in measuring bucket as recorded at the station for the 15 minute period ending at the time specified for DATE above given in tenths or hundredths of inches depending on the value given in the Units element (see definition for Units below). This observational element was added with the January 1996 data. QGAG indicates that quarter-hour Fischer-Porter gage values are used. The values 9999 or 99999 means the data value is missing. The maximum number of characters for this field is 8. This element is selectable when using the Climate Data Online interface for creating data output file.
+
+"""
+
 from dateutil.parser import parse
 
 import pandas as pd
 import numpy as np
 from datetime import timedelta
 from pylab import plot, bar, show
+import daily_json_to_dict
 
 def add_bars( list_x_index, list_bar_vals, outline=False, color=None, size=1):
     # function to add a set of bars to our pylab plot
@@ -242,16 +251,23 @@ def index_dates( list_of_rain_dict, date_start, date_xend, scale=1):
         distance = (date - date_start) / timedelta_distance
         list_output.append( distance*scale)
     return list_output
-    
+
 
 if __name__ == "__main__":
-    # Add a black outline for each Saturday in 2016
+    # Add a black outline for each Saturday in 2016 from feb to June
     date_start = parse('2016-feb-1')
     date_xend = parse('2016-june-2')
     x_dates = pd.date_range(date_start, date_xend)
     saturdays_2016 = tuple(find_sat(date) for date in x_dates)
     ind = np.arange(len(x_dates)) #select N evenly spaced values
     add_bars( ind, saturdays_2016, outline=True, color='black')
+    
+    list_climate_daily = daily_json_to_dict.get_daily_climate_list( daily_json_to_dict.list_json_response)
+    # index & add bars for max daily temp (degC) 2015
+    scale = ind.max()
+    ind_2015_max_degc = index_dates(list_climate_daily, parse('2015-feb-1'), parse('2015-june-2'), scale)
+    max_degc_2015 = [ x['TMAX_C'] for x in list_climate_daily]
+    add_bars( ind_2015_max_degc, max_degc_2015, color='blue')
 
     list_2013_rain_dict = csv.DictReader(str_zip49437_15min_precip.splitlines())
     #2013 precipitation, 15min resolution
