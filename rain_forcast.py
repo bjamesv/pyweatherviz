@@ -214,7 +214,10 @@ def clean_15_min_precip( list_rain_dicts):
         #remove bad data
         bad_qpcp = row['QPCP'] in( -9999,99999)
         if bad_qpcp:
-            row['QPCP'] = 0
+            row['QPCP'] = 0 #replace missing w/ 0
+        bad_qgag = row['QGAG'] in( -9999,99999)
+        if bad_qgag:
+            row['QGAG'] = 0 #replace missing w/ 0
         list_output.append( row)
     return list_output
 
