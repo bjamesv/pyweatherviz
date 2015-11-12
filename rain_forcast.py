@@ -230,6 +230,19 @@ def clean_15_min_precip( list_rain_dicts):
         list_output.append( row)
     return list_output
 
+def remove_dates_before( list_of_dicts, date):
+    """
+
+    >>> l=[{'DATE':parse('2011')},{'DATE':parse('2015')}]
+    >>> remove_dates_before( l, parse('2015'))
+    [{'DATE': datetime.datetime(2015, 11, 11, 0, 0)}]
+    """
+    list_return = list()
+    for d in list_of_dicts:
+        if d['DATE'] >= date:
+            list_return.append( d)
+    return list_return
+
 def index_dates( list_of_rain_dict, date_start, date_xend, scale=1):
     """
     return a list of floats ranging from 0 to scale, distributed based on the
@@ -255,7 +268,7 @@ def index_dates( list_of_rain_dict, date_start, date_xend, scale=1):
 
 if __name__ == "__main__":
     # Add a black outline for each Saturday in 2016 from feb to June
-    date_start = parse('2016-feb-1')
+    date_start = parse('2016-mar-17')
     date_xend = parse('2016-june-2')
     x_dates = pd.date_range(date_start, date_xend)
     saturdays_2016 = tuple(find_sat(date) for date in x_dates)
@@ -265,15 +278,16 @@ if __name__ == "__main__":
     list_climate_daily = daily_json_to_dict.get_daily_climate_list( daily_json_to_dict.list_json_response)
     # index & add bars for max daily temp (degC) 2015
     scale = ind.max()
-    ind_2015_max_degc = index_dates(list_climate_daily, parse('2015-feb-1'), parse('2015-june-2'), scale)
+    ind_2015_max_degc = index_dates(list_climate_daily, parse('2015-mar-17'), parse('2015-june-2'), scale)
     max_degc_2015 = [ x['TMAX_C'] for x in list_climate_daily]
     add_bars( ind_2015_max_degc, max_degc_2015, color='blue')
 
     list_2013_rain_dict = csv.DictReader(str_zip49437_15min_precip.splitlines())
+    date_start_2013 = parse('2013-mar-17')
     #2013 precipitation, 15min resolution
-    clean_list_2013 =  clean_15_min_precip( list_2013_rain_dict)
+    clean_list_2013 =  remove_dates_before( clean_15_min_precip( list_2013_rain_dict), date_start_2013)
     scale = ind.max()
-    ind_2013_rain = index_dates(clean_list_2013, parse('2013-feb-1'), parse('2013-june-2'), scale)
+    ind_2013_rain = index_dates(clean_list_2013, date_start_2013, parse('2013-june-2'), scale)
 
     inches_2013 = [ x['QPCP'] for x in clean_list_2013]
     add_bars( ind_2013_rain, inches_2013, color='orange')
