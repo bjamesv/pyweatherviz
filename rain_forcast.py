@@ -279,7 +279,8 @@ def index_dates( list_of_rain_dict, date_start, date_xend, scale=1):
 def add_daily_climate_line( date_start, date_xend, str_datatype='TMAX_C', color='blue'):
     #adds a daily climate line to our plot
     list_climate_daily_unordered = daily_json_to_dict.get_daily_climate_list( daily_json_to_dict.get_list_ncei_daily_climate(date_start, date_xend))
-    list_climate_daily = sorted(list_climate_daily_unordered, key=operator.itemgetter('DATE'))
+    list_climate_daily_clean = [ x for x in list_climate_daily_unordered if str_datatype in x.keys() ]
+    list_climate_daily = sorted(list_climate_daily_clean, key=operator.itemgetter('DATE'))
     # index & add bars for the referenced daily climate value
     scale = ind.max()
     ind_daily_climate = index_dates(list_climate_daily, date_start, date_xend, scale)
@@ -295,6 +296,9 @@ if __name__ == "__main__":
     ind = np.arange(len(x_dates)) #select N evenly spaced values
     add_bars( ind, saturdays_2016, outline=True, color='black')
 
+    date_start_2014 = parse('2014-mar-17')
+    date_xend_2014 = parse('2014-june-2')
+    add_daily_climate_line( date_start_2014, date_xend_2014)
     date_start_2015 = parse('2015-mar-17')
     date_xend_2015 = parse('2015-june-2')
     add_daily_climate_line( date_start_2015, date_xend_2015)

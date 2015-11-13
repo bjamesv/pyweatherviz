@@ -39,11 +39,12 @@ def get_daily_climate_list( list_daily_climate):
     df_by_date = pd.DataFrame(list_daily_climate).groupby('date')
     for str_group in df_by_date.groups.keys():
         # build dict - add date
-        dict_day = {'DATE': parse(str_group) }
-        # extract TMAX 
+        dict_day = {'DATE': parse(str_group)}
+        # extract TMAX
         df_day = df_by_date.get_group( str_group)
-        tmax_tenth_degC = df_day[ df_day.datatype == 'TMAX'].value
-        dict_day['TMAX_C'] = int(tmax_tenth_degC) / 10
+        if 'TMAX' in df_day.datatype.values:
+            tmax_tenth_degC = df_day[ df_day.datatype == 'TMAX'].value
+            dict_day['TMAX_C'] = int(tmax_tenth_degC) / 10
         # extract snow depth in mm
         dict_day['SNWD_MM'] = 0
         if 'SNWD' in df_day.datatype.values:
