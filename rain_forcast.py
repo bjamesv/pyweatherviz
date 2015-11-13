@@ -196,6 +196,7 @@ from dateutil.parser import parse
 import pandas as pd
 import numpy as np
 from datetime import timedelta
+import operator
 from pylab import plot, bar, show
 import daily_json_to_dict
 
@@ -207,7 +208,17 @@ def add_bars( list_x_index, list_bar_vals, outline=False, color=None, size=1):
         outline_color=bar_color
         bar_color=None
     bar(list_x_index, list_bar_vals,edgecolor=outline_color,color=bar_color)
-    
+
+def add_lines( list_x_index, list_bar_vals, color='blue'):
+    # function to add a line plot to our pylab plot
+    dict_kwargs = {
+         'linestyle':   'solid'
+        ,'marker'   :   'o'
+        ,'color'    :   color
+        ,'markersize':  2
+        }
+    plot(list_x_index, list_bar_vals, **dict_kwargs)
+
 # Render a set of black outlines for each Saturday in 2015
 sat_height = 100
 # Hight of the bars for Saturday
@@ -274,13 +285,14 @@ if __name__ == "__main__":
     saturdays_2016 = tuple(find_sat(date) for date in x_dates)
     ind = np.arange(len(x_dates)) #select N evenly spaced values
     add_bars( ind, saturdays_2016, outline=True, color='black')
-    
-    list_climate_daily = daily_json_to_dict.get_daily_climate_list( daily_json_to_dict.list_json_response)
+
+    list_climate_daily_unordered = daily_json_to_dict.get_daily_climate_list( daily_json_to_dict.list_json_response)
+    list_climate_daily = sorted(list_climate_daily_unordered, key=operator.itemgetter('DATE'))
     # index & add bars for max daily temp (degC) 2015
     scale = ind.max()
     ind_2015_max_degc = index_dates(list_climate_daily, parse('2015-mar-17'), parse('2015-june-2'), scale)
     max_degc_2015 = [ x['TMAX_C'] for x in list_climate_daily]
-    add_bars( ind_2015_max_degc, max_degc_2015, color='blue')
+    add_lines( ind_2015_max_degc, max_degc_2015)
 
     list_2013_rain_dict = csv.DictReader(str_zip49437_15min_precip.splitlines())
     date_start_2013 = parse('2013-mar-17')
