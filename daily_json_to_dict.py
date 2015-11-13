@@ -4,19 +4,26 @@ import requests
 import json
 import pandas as pd
 
-#obtain daily Global Historical Climatology Network data
-token = {'Token': api_info.key }
-url = "http://www.ncdc.noaa.gov/cdo-web/api/v2/data?\
+def get_list_ncei_daily_climate( date_start, date_xend):
+    #obtain daily Global Historical Climatology Network data
+    token = {'Token': api_info.key }
+    url = "http://www.ncdc.noaa.gov/cdo-web/api/v2/data?\
 datasetid=GHCND&stationid=GHCND:USC00205567\
-&startdate=2015-03-17&enddate=2015-06-02\
+&startdate={start}&enddate={xend}\
 &limit=1000"
-file_cache = 'daily_json_mamj.json'
-try:
-  cache = open( file_cache)
-  list_json_response = json.load( cache)
-except FileNotFoundError:
-  list_json_response = requests.get( url, headers=token).json().get('results')
-  json.dump( list_json_response, open( file_cache, 'w'))
+    dict_range={
+         'start': "{:%Y-%m-%d}".format( date_start)
+        ,'xend' : "{:%Y-%m-%d}".format( date_xend)
+        }
+    file_cache = 'daily_json_{start}_{xend}.json'.format( **dict_range)
+    try:
+      cache = open( file_cache)
+      list_json_response = json.load( cache)
+    except FileNotFoundError:
+      url_req = url.format( **dict_range)
+      list_json_response = requests.get( url_req, headers=token).json().get('results')
+      json.dump( list_json_response, open( file_cache, 'w'))
+    return list_json_response
 
 def get_daily_climate_list( list_daily_climate):
     """
