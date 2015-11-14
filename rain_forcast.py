@@ -296,12 +296,29 @@ if __name__ == "__main__":
     ind = np.arange(len(x_dates)) #select N evenly spaced values
     add_bars( ind, saturdays_2016, outline=True, color='black')
 
-    date_start_2014 = parse('2014-mar-17')
-    date_xend_2014 = parse('2014-june-2')
-    add_daily_climate_line( date_start_2014, date_xend_2014)
-    date_start_2015 = parse('2015-mar-17')
-    date_xend_2015 = parse('2015-june-2')
-    add_daily_climate_line( date_start_2015, date_xend_2015)
+    list_tmax = [{'date_start': parse('2012-mar-17')
+                 ,'date_xend' : parse('2012-june-2')
+                 ,'str_datatype': 'TMAX_C'
+                 ,'color'     : "#ccccff" #very faded blue
+                 }
+                ,{'date_start': parse('2013-mar-17')
+                 ,'date_xend' : parse('2013-june-2')
+                 ,'str_datatype': 'TMAX_C'
+                 ,'color'     : "#9999ff" #faded blue
+                 }
+                ,{'date_start': parse('2014-mar-17')
+                 ,'date_xend' : parse('2014-june-2')
+                 ,'str_datatype': 'TMAX_C'
+                 ,'color'     : "#5555ff" #only slightly faded
+                 }
+                ,{'date_start': parse('2015-mar-17')
+                 ,'date_xend' : parse('2015-june-2')
+                 ,'str_datatype': 'TMAX_C'
+                 ,'color'     : "#0000ff" #pure blue
+                 }
+                ]
+    for dict_args in list_tmax:
+        add_daily_climate_line( **dict_args)
 
     list_2013_rain_dict = csv.DictReader(str_zip49437_15min_precip.splitlines())
     date_start_2013 = parse('2013-mar-17')
