@@ -285,7 +285,7 @@ def add_daily_climate_line( date_start, date_xend, str_datatype='TMAX_C', color=
     scale = ind.max()
     ind_daily_climate = index_dates(list_climate_daily, date_start, date_xend, scale)
     list_values = [ x[str_datatype] for x in list_climate_daily]
-    add_lines( ind_daily_climate, list_values)
+    add_lines( ind_daily_climate, list_values, color)
 
 if __name__ == "__main__":
     # Add a black outline for each Saturday in 2016 from feb to June
