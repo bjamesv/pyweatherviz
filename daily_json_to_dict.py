@@ -45,6 +45,10 @@ def get_daily_climate_list( list_daily_climate):
         if 'TMAX' in df_day.datatype.values:
             tmax_tenth_degC = df_day[ df_day.datatype == 'TMAX'].value
             dict_day['TMAX_C'] = int(tmax_tenth_degC) / 10
+        # extract TMIN
+        if 'TMIN' in df_day.datatype.values:
+            tmin_tenth_degC = df_day[ df_day.datatype == 'TMIN'].value
+            dict_day['TMIN_C'] = int(tmin_tenth_degC) / 10
         # extract snow depth in mm
         dict_day['SNWD_MM'] = 0
         if 'SNWD' in df_day.datatype.values:

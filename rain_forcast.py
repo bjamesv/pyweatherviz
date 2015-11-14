@@ -296,28 +296,51 @@ if __name__ == "__main__":
     ind = np.arange(len(x_dates)) #select N evenly spaced values
     add_bars( ind, saturdays_2016, outline=True, color='black')
 
-    list_tmax = [{'date_start': parse('2012-mar-17')
+    # plot lines for daily climate values
+    list_daily_lines = [{'date_start': parse('2012-mar-17')
                  ,'date_xend' : parse('2012-june-2')
-                 ,'str_datatype': 'TMAX_C'
+                 ,'str_datatype': 'TMIN_C'
                  ,'color'     : "#ccccff" #very faded blue
                  }
                 ,{'date_start': parse('2013-mar-17')
                  ,'date_xend' : parse('2013-june-2')
-                 ,'str_datatype': 'TMAX_C'
+                 ,'str_datatype': 'TMIN_C'
                  ,'color'     : "#9999ff" #faded blue
                  }
                 ,{'date_start': parse('2014-mar-17')
                  ,'date_xend' : parse('2014-june-2')
-                 ,'str_datatype': 'TMAX_C'
+                 ,'str_datatype': 'TMIN_C'
                  ,'color'     : "#5555ff" #only slightly faded
                  }
                 ,{'date_start': parse('2015-mar-17')
                  ,'date_xend' : parse('2015-june-2')
-                 ,'str_datatype': 'TMAX_C'
+                 ,'str_datatype': 'TMIN_C'
                  ,'color'     : "#0000ff" #pure blue
                  }
                 ]
-    for dict_args in list_tmax:
+    # add line plots for TMAX
+    list_daily_lines.extend([{'date_start': parse('2012-mar-17')
+                 ,'date_xend' : parse('2012-june-2')
+                 ,'str_datatype': 'TMAX_C'
+                 ,'color'     : "#ffcccc" #very faded red
+                 }
+                ,{'date_start': parse('2013-mar-17')
+                 ,'date_xend' : parse('2013-june-2')
+                 ,'str_datatype': 'TMAX_C'
+                 ,'color'     : "#ff9999" #faded red
+                 }
+                ,{'date_start': parse('2014-mar-17')
+                 ,'date_xend' : parse('2014-june-2')
+                 ,'str_datatype': 'TMAX_C'
+                 ,'color'     : "#ff5555" #only slightly faded
+                 }
+                ,{'date_start': parse('2015-mar-17')
+                 ,'date_xend' : parse('2015-june-2')
+                 ,'str_datatype': 'TMAX_C'
+                 ,'color'     : "#ff0000" #pure red
+                 }
+                ])
+    for dict_args in list_daily_lines:
         add_daily_climate_line( **dict_args)
 
     list_2013_rain_dict = csv.DictReader(str_zip49437_15min_precip.splitlines())
