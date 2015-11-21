@@ -276,24 +276,27 @@ def index_dates( list_of_rain_dict, date_start, date_xend, scale=1):
         list_output.append( distance*scale)
     return list_output
 
-def add_daily_climate_line( date_start, date_xend, str_datatype='TMAX_C', color='blue'):
-    #adds a daily climate line to our plot
+def add_daily_climate_line( date_start, date_xend, dict_plot, str_datatype='TMAX_C', color='blue'):
+    #adds a historic, daily climate line to our forecast plot
     list_climate_daily_unordered = daily_json_to_dict.get_daily_climate_list( daily_json_to_dict.get_list_ncei_daily_climate(date_start, date_xend))
     list_climate_daily_clean = [ x for x in list_climate_daily_unordered if str_datatype in x.keys() ]
     list_climate_daily = sorted(list_climate_daily_clean, key=operator.itemgetter('DATE'))
     # prepare y-values, x-index & add bars for the referenced daily climate value
     list_values = [ x[str_datatype] for x in list_climate_daily]
-    timedelta_to_2016 = parse('2016-mar-17') - date_start
-    list_dates = [ x['DATE']+timedelta_to_2016 for x in list_climate_daily]
+    # plot list_values along x-axis relative to the target, forecast-year
+    forecast_plot_start_date = dict_plot['date_start']
+    timedelta_to_forecast_start = forecast_plot_start_date - date_start
+    list_dates = [ x['DATE']+timedelta_to_forecast_start for x in list_climate_daily]
     add_lines( list_dates, list_values, color)
 
 if __name__ == "__main__":
-    # Add a black outline for each Saturday in 2016 from feb to June
-    date_start = parse('2016-mar-17')
-    date_xend = parse('2016-june-2')
-    x_dates = pd.date_range(date_start, date_xend)
-    saturdays_2016 = tuple(find_sat(date) for date in x_dates)
-    add_bars( x_dates, saturdays_2016, outline=True, color='black')
+    # Add a black outline for each Saturday in 2017 from mid-March to June
+    dict_plot = {'date_start': parse('2017-mar-17')
+                ,'date_xend': parse('2017-june-2')
+                } #dictionary, describing our forcast plot.
+    x_dates = pd.date_range(dict_plot['date_start'], dict_plot['date_xend'])
+    saturdays = tuple(find_sat(date) for date in x_dates)
+    add_bars( x_dates, saturdays, outline=True, color='black')
 
     # plot lines for daily climate values
     list_daily_lines = [{'date_start': parse('2012-mar-17')
@@ -340,6 +343,7 @@ if __name__ == "__main__":
                  }
                 ])
     for dict_args in list_daily_lines:
+        dict_args['dict_plot'] = dict_plot
         add_daily_climate_line( **dict_args)
 
     list_2013_rain_dict = csv.DictReader(str_zip49437_15min_precip.splitlines())
@@ -347,8 +351,8 @@ if __name__ == "__main__":
     #2013 precipitation, 15min resolution
     clean_list_2013 =  remove_dates_before( clean_15_min_precip( list_2013_rain_dict), date_start_2013)
 
-    timedelta_to_2016 = date_start - date_start_2013
-    dates_2013 = [ x['DATE']+timedelta_to_2016 for x in clean_list_2013]
+    timedelta_to_forecast_year = dict_plot['date_start'] - date_start_2013
+    dates_2013 = [ x['DATE']+timedelta_to_forecast_year for x in clean_list_2013]
     inches_2013 = [ x['QPCP'] for x in clean_list_2013]
     add_bars( dates_2013, inches_2013, color='orange')
     xticks( rotation=25)
