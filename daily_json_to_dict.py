@@ -4,8 +4,20 @@ import requests
 import json
 import pandas as pd
 
-def get_list_ncei_daily_climate( date_start, date_xend):
-    #obtain daily Global Historical Climatology Network data
+def get_ncei_daily_climate_dicts( date_start, date_xend):
+    """
+    obtain daily Global Historical Climatology Network data, via disk cache
+    or NCEI web API registered developer token.
+    """
+    list_raw_dicts = _get_list_ncei_daily_climate( date_start, date_xend)
+    # build dicts, & return the collection.
+    return _get_daily_climate_dicts( list_raw_dicts)
+
+def _get_list_ncei_daily_climate( date_start, date_xend):
+    """
+    returns collection of dicts, representing raw daily Global Historical
+    Climatology Network data.
+    """
     token = {'Token': api_info.key }
     url = "http://www.ncdc.noaa.gov/cdo-web/api/v2/data?\
 datasetid=GHCND&stationid=GHCND:USC00205567\
@@ -25,12 +37,14 @@ datasetid=GHCND&stationid=GHCND:USC00205567\
       json.dump( list_json_response, open( file_cache, 'w'))
     return list_json_response
 
-def get_daily_climate_list( list_daily_climate):
+def _get_daily_climate_dicts( list_daily_climate):
     """
+    returns collection of dicts, each representing one day of daily Global
+    Historical Climatolody Network data.
 
     >>> l = [{'date':'2013-01-01T00:00:00','datatype':'TMAX','value':25}\
             ,{'date':'2013-01-01T00:00:00','datatype':'SNWD','value':175}]
-    >>> out = get_daily_climate_list( l)
+    >>> out = _get_daily_climate_dicts( l)
     >>> from pprint import pprint
     >>> pprint( out)
     [{'DATE': datetime.datetime(2013, 1, 1, 0, 0), 'SNWD_MM': 175, 'TMAX_C': 2.5}]

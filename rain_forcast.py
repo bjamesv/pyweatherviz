@@ -278,7 +278,7 @@ def index_dates( list_of_rain_dict, date_start, date_xend, scale=1):
 
 def add_daily_climate_line( date_start, date_xend, dict_plot, str_datatype='TMAX_C', color='blue'):
     #adds a historic, daily climate line to our forecast plot
-    list_climate_daily_unordered = daily_json_to_dict.get_daily_climate_list( daily_json_to_dict.get_list_ncei_daily_climate(date_start, date_xend))
+    list_climate_daily_unordered = daily_json_to_dict.get_ncei_daily_climate_dicts(date_start, date_xend)
     list_climate_daily_clean = [ x for x in list_climate_daily_unordered if str_datatype in x.keys() ]
     list_climate_daily = sorted(list_climate_daily_clean, key=operator.itemgetter('DATE'))
     # prepare y-values, x-index & add bars for the referenced daily climate value
