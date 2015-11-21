@@ -18,6 +18,12 @@ http://www.usclimatedata.com/climate/muskegon/michigan/united-states/usmi0584/20
 |2014|29-mar|15-apr|
 |2015|17-mar|  n/a |
 
+# West Michigan outdoor wedding recommendations
+M. Torregrossa (2013) recommends between 11am & 2pm.
+
+For spring; any time in May is recommended.
+
+http://www.mlive.com/weather/index.ssf/2013/09/outdoor_weddings_in_michigan_w.html
 
 # 2016 Climate model
 http://www.cpc.ncep.noaa.gov/products/predictions/long_range/fxus05.html

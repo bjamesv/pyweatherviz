@@ -333,6 +333,30 @@ if __name__ == "__main__":
         dict_args['dict_plot'] = dict_plot
         add_daily_climate_bars( **dict_args)
 
+    # add bar plots for Precipitation in CM
+    list_daily_rain_bars = [
+         {'date_start': parse('2012-mar-17')
+         ,'date_xend' : parse('2012-june-2')
+         ,'color'     : '#ffeedd' #very faded orange
+         }
+        ,{'date_start': parse('2013-mar-17') #Some of 2013 data is missing?!
+         ,'date_xend' : parse('2013-june-2')
+         ,'color'     : '#ffeebb' #faded orange
+         }
+        ,{'date_start': parse('2014-mar-17')
+         ,'date_xend' : parse('2014-june-2')
+         ,'color'     : '#ffee77' #slighty faded orange
+         }
+        ,{'date_start': parse('2015-mar-17')
+         ,'date_xend' : parse('2015-june-2')
+         ,'color'     : '#ffeeff' #orange
+         }
+        ]
+    for dict_args in list_daily_rain_bars:
+        dict_args['str_datatype'] = 'PRCP_MM'
+        dict_args['dict_plot'] = dict_plot
+        add_daily_climate_bars( **dict_args)
+
     # Add a black outline for each Saturday in 2017 from mid-March to June
     x_dates = pd.date_range(dict_plot['date_start'], dict_plot['date_xend'])
     saturdays = tuple(find_sat(date) for date in x_dates)

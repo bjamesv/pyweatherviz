@@ -67,6 +67,11 @@ def _get_daily_climate_dicts( list_daily_climate):
         dict_day['SNWD_MM'] = 0
         if 'SNWD' in df_day.datatype.values:
             dict_day['SNWD_MM'] = int(df_day[ df_day.datatype == 'SNWD'].value)
+        # extract precipitation in mm
+        dict_day['PRCP_MM'] = 0
+        if 'PRCP' in df_day.datatype.values:
+            tenth_mm = int(df_day[ df_day.datatype == 'PRCP'].value)
+            dict_day['PRCP_MM'] = tenth_mm / 10
         # add dict to list
         list_one_row_per_day.append( dict_day)
     return list_one_row_per_day
