@@ -304,55 +304,40 @@ def add_daily_climate_bars( date_start, date_xend, dict_plot, str_datatype='SNWD
 
 if __name__ == "__main__":
     #dictionary, describing range of dates for our forcast plot
-    dict_plot = {'date_start': parse('2017-mar-17')
-                ,'date_xend': parse('2017-june-2')
+    str_year = '2017'
+    str_start_mondd = '-mar-17'
+    str_xend_mondd = '-june-2'
+    dict_plot = {'date_start': parse(str_year+str_start_mondd)
+                ,'date_xend': parse(str_year+str_xend_mondd)
                 }
 
     # add bar plots for SnowDepth in CM
-    list_daily_snow_bars = [
-         {'date_start': parse('2012-mar-17')
-         ,'date_xend' : parse('2012-june-2') 
-         ,'color'     : '#ffffff' #white
-         }
-        ,{'date_start': parse('2013-mar-17')
-         ,'date_xend' : parse('2013-june-2') 
-         ,'color'     : '#ddddff' #very faded blue
-         }
-        ,{'date_start': parse('2014-mar-17')
-         ,'date_xend' : parse('2014-june-2') 
-         ,'color'     : '#bbbbff' #faded blue
-         }
-        ,{'date_start': parse('2015-mar-17')
-         ,'date_xend' : parse('2015-june-2') 
-         ,'color'     : '#7777ff' #slightly faded blue
-         }
-        ]
-    for dict_args in list_daily_snow_bars:
+    list_year_color_tuple = [ ('2012','#ffffff') #white
+                             ,('2013','#ddddff') #very faded blue
+                             ,('2014','#bbbbff') #faded blue
+                             ,('2015','#7777ff') #slightly faded blue
+                            ]
+    for str_year_snow,str_color in list_year_color_tuple:
+        dict_args = {'date_start': parse(str_year_snow+str_start_mondd)
+                    ,'date_xend' : parse(str_year_snow+str_xend_mondd)
+                    ,'color'     : str_color
+                    }
         dict_args['str_datatype'] = 'SNWD_MM'
         dict_args['scale'] = 0.1 # scale MM of depth values, to CM depth
         dict_args['dict_plot'] = dict_plot
         add_daily_climate_bars( **dict_args)
 
     # add bar plots for Precipitation in CM
-    list_daily_rain_bars = [
-         {'date_start': parse('2012-mar-17')
-         ,'date_xend' : parse('2012-june-2')
-         ,'color'     : '#ffeedd' #very faded orange
-         }
-        ,{'date_start': parse('2013-mar-17') #Some of 2013 data is missing?!
-         ,'date_xend' : parse('2013-june-2')
-         ,'color'     : '#ffeebb' #faded orange
-         }
-        ,{'date_start': parse('2014-mar-17')
-         ,'date_xend' : parse('2014-june-2')
-         ,'color'     : '#ffee77' #slighty faded orange
-         }
-        ,{'date_start': parse('2015-mar-17')
-         ,'date_xend' : parse('2015-june-2')
-         ,'color'     : '#ffeeff' #orange
-         }
-        ]
-    for dict_args in list_daily_rain_bars:
+    list_year_color_tuple = [ ('2012','#ffeedd') #very faded orange
+                             ,('2013','#ffeebb') #faded orange
+                             ,('2014','#ffee77') #slighty faded orange
+                             ,('2015','#ffeeff') #orange
+                            ]
+    for str_year_rain,str_color in list_year_color_tuple:
+        dict_args = {'date_start': parse(str_year_rain+str_start_mondd)
+                    ,'date_xend' : parse(str_year_rain+str_xend_mondd)
+                    ,'color'     : str_color
+                    }
         dict_args['str_datatype'] = 'PRCP_MM'
         dict_args['dict_plot'] = dict_plot
         add_daily_climate_bars( **dict_args)
@@ -362,56 +347,37 @@ if __name__ == "__main__":
     saturdays = tuple(find_sat(date) for date in x_dates)
     add_bars( x_dates, saturdays, outline=True, color='black')
 
-    # plot lines for daily climate values
-    list_daily_lines = [{'date_start': parse('2012-mar-17')
-                 ,'date_xend' : parse('2012-june-2')
-                 ,'str_datatype': 'TMIN_C'
-                 ,'color'     : "#ccccff" #very faded blue
-                 }
-                ,{'date_start': parse('2013-mar-17')
-                 ,'date_xend' : parse('2013-june-2')
-                 ,'str_datatype': 'TMIN_C'
-                 ,'color'     : "#9999ff" #faded blue
-                 }
-                ,{'date_start': parse('2014-mar-17')
-                 ,'date_xend' : parse('2014-june-2')
-                 ,'str_datatype': 'TMIN_C'
-                 ,'color'     : "#5555ff" #only slightly faded
-                 }
-                ,{'date_start': parse('2015-mar-17')
-                 ,'date_xend' : parse('2015-june-2')
-                 ,'str_datatype': 'TMIN_C'
-                 ,'color'     : "#0000ff" #pure blue
-                 }
-                ]
+    # plot lines for daily climate Min. temp. values
+    list_year_color_tuple = [ ('2012',"#ccccff") #very faded blue
+                             ,('2013',"#9999ff") #faded blue
+                             ,('2014',"#5555ff") #only slightly faded
+                             ,('2015',"#0000ff") #pure blue
+                            ]
+    for str_year_tmin,str_color in list_year_color_tuple:
+        dict_args = {'date_start': parse(str_year_tmin+str_start_mondd)
+                    ,'date_xend' : parse(str_year_tmin+str_xend_mondd)
+                    ,'color'     : str_color
+                    }
+        dict_args['str_datatype'] = 'TMIN_C'
+        dict_args['dict_plot'] = dict_plot
+        add_daily_climate_line( **dict_args)
     # add line plots for TMAX
-    list_daily_lines.extend([{'date_start': parse('2012-mar-17')
-                 ,'date_xend' : parse('2012-june-2')
-                 ,'str_datatype': 'TMAX_C'
-                 ,'color'     : "#ffcccc" #very faded red
-                 }
-                ,{'date_start': parse('2013-mar-17')
-                 ,'date_xend' : parse('2013-june-2')
-                 ,'str_datatype': 'TMAX_C'
-                 ,'color'     : "#ff9999" #faded red
-                 }
-                ,{'date_start': parse('2014-mar-17')
-                 ,'date_xend' : parse('2014-june-2')
-                 ,'str_datatype': 'TMAX_C'
-                 ,'color'     : "#ff5555" #only slightly faded
-                 }
-                ,{'date_start': parse('2015-mar-17')
-                 ,'date_xend' : parse('2015-june-2')
-                 ,'str_datatype': 'TMAX_C'
-                 ,'color'     : "#ff0000" #pure red
-                 }
-                ])
-    for dict_args in list_daily_lines:
+    list_year_color_tuple = [ ('2012',"#ffcccc") #very faded red
+                             ,('2013',"#ff9999") #faded red
+                             ,('2014',"#ff5555") #only slightly faded
+                             ,('2015',"#ff0000") #pure red
+                            ]
+    for str_year_tmax,str_color in list_year_color_tuple:
+        dict_args = {'date_start': parse(str_year_tmax+str_start_mondd)
+                    ,'date_xend' : parse(str_year_tmax+str_xend_mondd)
+                    ,'color'     : str_color
+                    }
+        dict_args['str_datatype'] = 'TMAX_C'
         dict_args['dict_plot'] = dict_plot
         add_daily_climate_line( **dict_args)
 
     list_2013_rain_dict = csv.DictReader(str_zip49437_15min_precip.splitlines())
-    date_start_2013 = parse('2013-mar-17')
+    date_start_2013 = parse('2013'+str_start_mondd)
     #2013 precipitation, 15min resolution
     clean_list_2013 =  remove_dates_before( clean_15_min_precip( list_2013_rain_dict), date_start_2013)
 
