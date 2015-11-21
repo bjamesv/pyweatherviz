@@ -244,9 +244,9 @@ def clean_15_min_precip( list_rain_dicts):
 def remove_dates_before( list_of_dicts, date):
     """
 
-    >>> l=[{'DATE':parse('2011')},{'DATE':parse('2015')}]
-    >>> remove_dates_before( l, parse('2015'))
-    [{'DATE': datetime.datetime(2015, 11, 11, 0, 0)}]
+    >>> l=[{'DATE':parse('2011-1-1')},{'DATE':parse('2015-1-1')}]
+    >>> remove_dates_before( l, parse('2015-1-1'))
+    [{'DATE': datetime.datetime(2015, 1, 1, 0, 0)}]
     """
     list_return = list()
     for d in list_of_dicts:
