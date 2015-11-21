@@ -289,11 +289,51 @@ def add_daily_climate_line( date_start, date_xend, dict_plot, str_datatype='TMAX
     list_dates = [ x['DATE']+timedelta_to_forecast_start for x in list_climate_daily]
     add_lines( list_dates, list_values, color)
 
+def add_daily_climate_bars( date_start, date_xend, dict_plot, str_datatype='SNWD_MM', color='white', scale=1):
+    #adds historic, daily climate bars to our forecast plot
+    list_climate_daily_unordered = daily_json_to_dict.get_ncei_daily_climate_dicts(date_start, date_xend)
+    list_climate_daily_clean = [ x for x in list_climate_daily_unordered if str_datatype in x.keys() ]
+    list_climate_daily = sorted(list_climate_daily_clean, key=operator.itemgetter('DATE'))
+    # prepare y-values, x-index & add bars for the referenced daily climate value
+    list_values = [ x[str_datatype]*scale for x in list_climate_daily]
+    # plot list_values along x-axis relative to the target, forecast-year
+    forecast_plot_start_date = dict_plot['date_start']
+    timedelta_to_forecast_start = forecast_plot_start_date - date_start
+    list_dates = [ x['DATE']+timedelta_to_forecast_start for x in list_climate_daily]
+    add_bars( list_dates, list_values, color=color)
+
 if __name__ == "__main__":
-    # Add a black outline for each Saturday in 2017 from mid-March to June
+    #dictionary, describing range of dates for our forcast plot
     dict_plot = {'date_start': parse('2017-mar-17')
                 ,'date_xend': parse('2017-june-2')
-                } #dictionary, describing our forcast plot.
+                }
+
+    # add bar plots for SnowDepth in CM
+    list_daily_snow_bars = [
+         {'date_start': parse('2012-mar-17')
+         ,'date_xend' : parse('2012-june-2') 
+         ,'color'     : '#ffffff' #white
+         }
+        ,{'date_start': parse('2013-mar-17')
+         ,'date_xend' : parse('2013-june-2') 
+         ,'color'     : '#ddddff' #very faded blue
+         }
+        ,{'date_start': parse('2014-mar-17')
+         ,'date_xend' : parse('2014-june-2') 
+         ,'color'     : '#bbbbff' #faded blue
+         }
+        ,{'date_start': parse('2015-mar-17')
+         ,'date_xend' : parse('2015-june-2') 
+         ,'color'     : '#7777ff' #slightly faded blue
+         }
+        ]
+    for dict_args in list_daily_snow_bars:
+        dict_args['str_datatype'] = 'SNWD_MM'
+        dict_args['scale'] = 0.1 # scale MM of depth values, to CM depth
+        dict_args['dict_plot'] = dict_plot
+        add_daily_climate_bars( **dict_args)
+
+    # Add a black outline for each Saturday in 2017 from mid-March to June
     x_dates = pd.date_range(dict_plot['date_start'], dict_plot['date_xend'])
     saturdays = tuple(find_sat(date) for date in x_dates)
     add_bars( x_dates, saturdays, outline=True, color='black')
