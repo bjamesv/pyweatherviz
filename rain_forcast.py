@@ -197,7 +197,7 @@ import pandas as pd
 import numpy as np
 from datetime import timedelta
 import operator
-from pylab import plot, bar, show
+from pylab import plot, bar, show, xticks
 import daily_json_to_dict
 
 def add_bars( list_x_index, list_bar_vals, outline=False, color=None, size=1):
@@ -281,11 +281,11 @@ def add_daily_climate_line( date_start, date_xend, str_datatype='TMAX_C', color=
     list_climate_daily_unordered = daily_json_to_dict.get_daily_climate_list( daily_json_to_dict.get_list_ncei_daily_climate(date_start, date_xend))
     list_climate_daily_clean = [ x for x in list_climate_daily_unordered if str_datatype in x.keys() ]
     list_climate_daily = sorted(list_climate_daily_clean, key=operator.itemgetter('DATE'))
-    # index & add bars for the referenced daily climate value
-    scale = ind.max()
-    ind_daily_climate = index_dates(list_climate_daily, date_start, date_xend, scale)
+    # prepare y-values, x-index & add bars for the referenced daily climate value
     list_values = [ x[str_datatype] for x in list_climate_daily]
-    add_lines( ind_daily_climate, list_values, color)
+    timedelta_to_2016 = parse('2016-mar-17') - date_start
+    list_dates = [ x['DATE']+timedelta_to_2016 for x in list_climate_daily]
+    add_lines( list_dates, list_values, color)
 
 if __name__ == "__main__":
     # Add a black outline for each Saturday in 2016 from feb to June
@@ -293,8 +293,7 @@ if __name__ == "__main__":
     date_xend = parse('2016-june-2')
     x_dates = pd.date_range(date_start, date_xend)
     saturdays_2016 = tuple(find_sat(date) for date in x_dates)
-    ind = np.arange(len(x_dates)) #select N evenly spaced values
-    add_bars( ind, saturdays_2016, outline=True, color='black')
+    add_bars( x_dates, saturdays_2016, outline=True, color='black')
 
     # plot lines for daily climate values
     list_daily_lines = [{'date_start': parse('2012-mar-17')
@@ -347,9 +346,10 @@ if __name__ == "__main__":
     date_start_2013 = parse('2013-mar-17')
     #2013 precipitation, 15min resolution
     clean_list_2013 =  remove_dates_before( clean_15_min_precip( list_2013_rain_dict), date_start_2013)
-    scale = ind.max()
-    ind_2013_rain = index_dates(clean_list_2013, date_start_2013, parse('2013-june-2'), scale)
 
+    timedelta_to_2016 = date_start - date_start_2013
+    dates_2013 = [ x['DATE']+timedelta_to_2016 for x in clean_list_2013]
     inches_2013 = [ x['QPCP'] for x in clean_list_2013]
-    add_bars( ind_2013_rain, inches_2013, color='orange')
+    add_bars( dates_2013, inches_2013, color='orange')
+    xticks( rotation=25)
     show()
