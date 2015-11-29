@@ -19,7 +19,7 @@ def _get_list_ncei_daily_climate( date_start, date_xend):
     Climatology Network data.
     """
     token = {'Token': api_info.key }
-    url = "http://www.ncdc.noaa.gov/cdo-web/api/v2/data?\
+    url = "https://www.ncdc.noaa.gov/cdo-web/api/v2/data?\
 datasetid=GHCND&stationid=GHCND:USC00205567\
 &startdate={start}&enddate={xend}\
 &limit=1000"
