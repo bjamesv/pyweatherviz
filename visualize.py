@@ -303,7 +303,7 @@ def add_daily_climate_bars( date_start, date_xend, dict_plot, str_datatype='SNWD
     add_bars( list_dates, list_values, color=color)
 
 if __name__ == "__main__":
-    #dictionary, describing range of dates for our forcast plot
+    #dictionary, describing range of dates for our forecast plot
     str_year = '2017'
     str_start_mondd = '-mar-17'
     str_xend_mondd = '-june-2'
