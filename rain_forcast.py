@@ -200,14 +200,14 @@ import operator
 from pylab import plot, bar, show, xticks
 import daily_json_to_dict
 
-def add_bars( list_x_index, list_bar_vals, outline=False, color=None, size=1):
+def add_bars( list_x_index, list_bar_vals, outline=False, color=None, width=0.8):
     # function to add a set of bars to our pylab plot
     bar_color=color
     outline_color=None
     if outline: # set color for outline & make bar transparent
         outline_color=bar_color
         bar_color=None
-    bar(list_x_index, list_bar_vals,edgecolor=outline_color,color=bar_color)
+    bar(list_x_index, list_bar_vals,edgecolor=outline_color,color=bar_color,width=width)
 
 def add_lines( list_x_index, list_bar_vals, color='blue'):
     # function to add a line plot to our pylab plot
@@ -345,7 +345,7 @@ if __name__ == "__main__":
     # Add a black outline for each Saturday in 2017 from mid-March to June
     x_dates = pd.date_range(dict_plot['date_start'], dict_plot['date_xend'])
     saturdays = tuple(find_sat(date) for date in x_dates)
-    add_bars( x_dates, saturdays, outline=True, color='black')
+    add_bars( x_dates, saturdays, outline=True, color='black', width=0.2)
 
     # plot lines for daily climate Min. temp. values
     list_year_color_tuple = [ ('2012',"#ccccff") #very faded blue
