@@ -1,6 +1,6 @@
 # PyWeatherViz - US Future Weather Visualization
 
-PyWeatherViz is a collection of Python modules to explore & visualize past weather data, with an aim toward understanding what future weather may be like.
+PyWeatherViz is a collection of Python modules to explore & visualize past weather data, with an aim toward understanding what future weather may be like on specific days.
 
 PyWeatherViz is licensed under the GNU GPL v3
 
@@ -17,7 +17,7 @@ PyWeatherViz started as an IPython Jupyter notebook, but has since been transiti
 
 ![Montague, Michigan 2012-2015 weather for the period 17-MAR to 1-JUN of those years](https://raw.githubusercontent.com/bjamesv/pyweatherviz/master/doc/figure_1.png)
 
-The darkest, orange line plot represents 2015 daily high temperatures over the target time period. Additional orange lines plots represent 2014-2012 daily high temps, with the oldest data being most faded/white.
+The darkest, red line plot represents 2015 daily high temperatures over the target time period. Additional red lines plots represent 2014-2012 daily high temps, with the oldest data being most faded/white.
 
 The darkest, blue line plot represents 2015 daily low temperatures. With additional blue line plots representing 2012-2014 daily low temps (similarly fading to white as data goes further back in time).
 

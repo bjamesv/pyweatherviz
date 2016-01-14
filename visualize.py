@@ -1,4 +1,24 @@
 #%matplotlib inline
+"""PyWeatherViz
+'visualize.py' -- a python module to visualize the past weather, related to a
+future range of dates.
+
+Usage:
+  visualize.py (-h | --help)
+  visualize.py [<months>]
+  visualize.py [<start> <months>]
+  visualize.py [--start=<date> --months=<num>]
+  visualize.py [<start> <end>]
+  visualize.py [--start=<date> --end=<date>]
+
+Options:
+  -h --help     Show this screen.
+  --start=<dt>  Starting date in the future, to retrieve weather history for.
+                [default: tomorrow]
+  --months=<n>  Number of months to visualize. [default: 3]
+  --end=<date>  Visualization end date (End date will not be included in plot).
+
+"""
 import csv
 from datetime import datetime
 str_zip49437_15min_precip = """STATION,STATION_NAME,DATE,QGAG,QPCP
@@ -190,9 +210,10 @@ QPCP: The amount of precipitation recorded at the station for the 15 minute peri
 QGAG: The volume of precipitation (calculated by weight) accumulated in measuring bucket as recorded at the station for the 15 minute period ending at the time specified for DATE above given in tenths or hundredths of inches depending on the value given in the Units element (see definition for Units below). This observational element was added with the January 1996 data. QGAG indicates that quarter-hour Fischer-Porter gage values are used. The values 9999 or 99999 means the data value is missing. The maximum number of characters for this field is 8. This element is selectable when using the Climate Data Online interface for creating data output file.
 
 """
-
+import math
 from dateutil.parser import parse
-
+from dateutil.relativedelta import relativedelta
+from docopt import docopt
 import pandas as pd
 import numpy as np
 from datetime import timedelta
@@ -303,23 +324,56 @@ def add_daily_climate_bars( date_start, date_xend, dict_plot, str_datatype='SNWD
     add_bars( list_dates, list_values, color=color)
 
 if __name__ == "__main__":
+    forecast_start = datetime.now()+timedelta(days=1) #default: tomorrow
+    forecast_xend = forecast_start+relativedelta(months=3)
+    arguments = docopt(__doc__) #process command line arguments
+    if arguments['<start>'] is not None: #get start date
+        forecast_start = parse(arguments['<start>'])
+    if arguments['--start'] is not None:
+        try:
+            forecast_start = parse(arguments['--start']) #named opt overrides
+        except TypeError:
+            if arguments['--start'] != 'tomorrow': #no error, if default
+                raise
+    if arguments['--months'] is not None: #get range of dates/default
+        num = int(arguments['--months'])
+        forecast_xend = forecast_start+relativedelta(months=num)
+    if arguments['<months>'] is not None:
+        try:
+            num = int(arguments['<months>'])
+            forecast_xend = forecast_start+relativedelta(months=num)
+        except ValueError:
+            try:
+                forecast_xend = parse(arguments['<months>'])
+            except TypeError as e:
+                msg = 'unable to tell if <end> or <month> specified. For help'\
+                        +' see visualize.py -h'
+                exception = Exception(msg)
+                raise exception from e
+    if arguments['<end>'] is not None: # specified end date overrides range
+        forecast_xend = parse(arguments['<end>'])
+    if arguments['--end'] is not None:
+        forecast_xend = parse(arguments['--end'])
     #dictionary, describing range of dates for our forecast plot
-    str_year = '2017'
-    str_start_mondd = '-mar-17'
-    str_xend_mondd = '-june-2'
-    dict_plot = {'date_start': parse(str_year+str_start_mondd)
-                ,'date_xend': parse(str_year+str_xend_mondd)
+    forecast_range = forecast_xend - forecast_start
+    dict_plot = {'date_start': forecast_start
+                ,'date_xend': forecast_xend
                 }
 
     # add bar plots for SnowDepth in CM
-    list_year_color_tuple = [ ('2012','#ffffff') #white
-                             ,('2013','#ddddff') #very faded blue
-                             ,('2014','#bbbbff') #faded blue
-                             ,('2015','#7777ff') #slightly faded blue
+    list_year_color_tuple = [ (4,'#ffffff') #white
+                             ,(3,'#ddddff') #very faded blue
+                             ,(2,'#bbbbff') #faded blue
+                             ,(1,'#7777ff') #slightly faded blue
                             ]
-    for str_year_snow,str_color in list_year_color_tuple:
-        dict_args = {'date_start': parse(str_year_snow+str_start_mondd)
-                    ,'date_xend' : parse(str_year_snow+str_xend_mondd)
+    for snow_year_offset,str_color in list_year_color_tuple:
+        #adjust to retrieve 4 years data,if forecast is 2+year in future
+        delta_forecast_years_from_current = forecast_xend - datetime.now()
+        days = delta_forecast_years_from_current.days
+        forecast_xend_offset_years = math.floor( days/365.25)
+        snow_year_offset += forecast_xend_offset_years
+        dict_args = {'date_start': forecast_start-relativedelta(years=snow_year_offset)
+                    ,'date_xend' : forecast_xend-relativedelta(years=snow_year_offset)
                     ,'color'     : str_color
                     }
         dict_args['str_datatype'] = 'SNWD_MM'
@@ -328,14 +382,19 @@ if __name__ == "__main__":
         add_daily_climate_bars( **dict_args)
 
     # add bar plots for Precipitation in CM
-    list_year_color_tuple = [ ('2012','#ffeedd') #very faded orange
-                             ,('2013','#ffeebb') #faded orange
-                             ,('2014','#ffee77') #slighty faded orange
-                             ,('2015','#ffeeff') #orange
+    list_year_color_tuple = [ (4,'#ffeedd') #very faded orange
+                             ,(3,'#ffeebb') #faded orange
+                             ,(2,'#ffee77') #slighty faded orange
+                             ,(1,'#ffeeff') #orange
                             ]
-    for str_year_rain,str_color in list_year_color_tuple:
-        dict_args = {'date_start': parse(str_year_rain+str_start_mondd)
-                    ,'date_xend' : parse(str_year_rain+str_xend_mondd)
+    for rain_year_hist_offset,str_color in list_year_color_tuple:
+        #adjust to retrieve 4 years data,if forecast is 2+year in future
+        delta_forecast_years_from_current = forecast_xend - datetime.now()
+        days = delta_forecast_years_from_current.days
+        forecast_xend_offset_years = math.floor( days/365.25)
+        rain_year_hist_offset += forecast_xend_offset_years
+        dict_args = {'date_start': forecast_start-relativedelta(years=rain_year_hist_offset)
+                    ,'date_xend' : forecast_xend-relativedelta(years=rain_year_hist_offset)
                     ,'color'     : str_color
                     }
         dict_args['str_datatype'] = 'PRCP_MM'
@@ -348,28 +407,38 @@ if __name__ == "__main__":
     add_bars( x_dates, saturdays, outline=True, color='black', width=0.2)
 
     # plot lines for daily climate Min. temp. values
-    list_year_color_tuple = [ ('2012',"#ccccff") #very faded blue
-                             ,('2013',"#9999ff") #faded blue
-                             ,('2014',"#5555ff") #only slightly faded
-                             ,('2015',"#0000ff") #pure blue
+    list_year_color_tuple = [ (4,"#ccccff") #very faded blue
+                             ,(3,"#9999ff") #faded blue
+                             ,(2,"#5555ff") #only slightly faded
+                             ,(1,"#0000ff") #pure blue
                             ]
-    for str_year_tmin,str_color in list_year_color_tuple:
-        dict_args = {'date_start': parse(str_year_tmin+str_start_mondd)
-                    ,'date_xend' : parse(str_year_tmin+str_xend_mondd)
+    for tmin_year_offset,str_color in list_year_color_tuple:
+        #adjust to retrieve 4 years data,if forecast is 2+year in future
+        delta_forecast_years_from_current = forecast_xend - datetime.now()
+        days = delta_forecast_years_from_current.days
+        forecast_xend_offset_years = math.floor( days/365.25)
+        tmin_year_offset += forecast_xend_offset_years
+        dict_args = {'date_start': forecast_start-relativedelta(years=tmin_year_offset)
+                    ,'date_xend' : forecast_xend-relativedelta(years=tmin_year_offset)
                     ,'color'     : str_color
                     }
         dict_args['str_datatype'] = 'TMIN_C'
         dict_args['dict_plot'] = dict_plot
         add_daily_climate_line( **dict_args)
     # add line plots for TMAX
-    list_year_color_tuple = [ ('2012',"#ffcccc") #very faded red
-                             ,('2013',"#ff9999") #faded red
-                             ,('2014',"#ff5555") #only slightly faded
-                             ,('2015',"#ff0000") #pure red
+    list_year_color_tuple = [ (4,"#ffcccc") #very faded red
+                             ,(3,"#ff9999") #faded red
+                             ,(2,"#ff5555") #only slightly faded
+                             ,(1,"#ff0000") #pure red
                             ]
-    for str_year_tmax,str_color in list_year_color_tuple:
-        dict_args = {'date_start': parse(str_year_tmax+str_start_mondd)
-                    ,'date_xend' : parse(str_year_tmax+str_xend_mondd)
+    for tmax_year_offset,str_color in list_year_color_tuple:
+        #adjust to retrieve 4 years data,if forecast is 2+year in future
+        delta_forecast_years_from_current = forecast_xend - datetime.now()
+        days = delta_forecast_years_from_current.days
+        forecast_xend_offset_years = math.floor( days/365.25)
+        tmax_year_offset += forecast_xend_offset_years
+        dict_args = {'date_start': forecast_start-relativedelta(years=tmax_year_offset)
+                    ,'date_xend' : forecast_xend-relativedelta(years=tmax_year_offset)
                     ,'color'     : str_color
                     }
         dict_args['str_datatype'] = 'TMAX_C'
@@ -377,7 +446,10 @@ if __name__ == "__main__":
         add_daily_climate_line( **dict_args)
 
     list_2013_rain_dict = csv.DictReader(str_zip49437_15min_precip.splitlines())
-    date_start_2013 = parse('2013'+str_start_mondd)
+    #find 2013 starting date
+    thirteen = parse('2013-01-01')
+    offset_to_2013 = math.floor((forecast_start-thirteen).days/365.25)
+    date_start_2013 = forecast_start - relativedelta(years=offset_to_2013) 
     #2013 precipitation, 15min resolution
     clean_list_2013 =  remove_dates_before( clean_15_min_precip( list_2013_rain_dict), date_start_2013)
 

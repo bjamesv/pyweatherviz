@@ -1,0 +1,5 @@
+python-dateutil
+pandas
+pylab
+requests
+docopts
