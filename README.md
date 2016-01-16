@@ -29,11 +29,13 @@ Top-to-bottom, black, vertical bars represent Saturdays in 2016 over the visuali
 
 ## Roadmap
  - [ ] Add legend detailing the meaning of each plot (data type, year, source weather station, etc.)
+ - [ ] Ensure day of month is always displayed on X-axis ticks, even when large date range is visualized.
+ - [ ] Optional temperature output in fahrenheit
  - [ ] Replace ~~hardcoded target date range to be visualized~~, weather station id, etc. _(partially complete)_
  - [x] Clean up unused functions
  - [x] Deprecate use of 15min precip CSV data (supplements 2013 data gaps, but slows script execution)
  - [ ] Improve visualization of missing data
- - [ ] Reduce code duplication
- - [x] Optimize repeated opening/reading of NCEI cache files while plotting. 
+ - [ ] Reduce code duplication, tidy the plotted colors & number of historic years
+ - [x] Optimize repeated opening/reading of NCEI cache files while plotting.
 
 Copyright (C) 2015, 2016 Brandon J. Van Vaerenbergh
