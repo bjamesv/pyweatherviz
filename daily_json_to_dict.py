@@ -3,6 +3,7 @@ from dateutil.parser import parse
 import requests
 import json
 import pandas as pd
+import logging
 
 def get_ncei_daily_climate_dicts( date_start, date_xend):
     """
@@ -30,9 +31,12 @@ datasetid=GHCND&stationid=GHCND:USC00205567\
     file_cache = 'daily_json_{start}_{xend}.json'.format( **dict_range)
     try:
       cache = open( file_cache)
+      logging.info('Opening local NCEI cache: ({})'.format(file_cache))
       list_json_response = json.load( cache)
     except FileNotFoundError:
       url_req = url.format( **dict_range)
+      msg = 'Local NCIE cache ({}) not found, downloading: ({})'
+      logging.info(msg.format(file_cache,url_req))
       # default requests behavior for connect timeout (infinte wait?) was no
       # good on a poorly configured IPv6 network (many, dead routes)
       max_s = (5,45) #docs.python-requests.org/en/latest/user/advanced/#timeouts

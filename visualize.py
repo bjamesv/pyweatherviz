@@ -5,11 +5,12 @@ future range of dates.
 
 Usage:
   visualize.py (-h | --help)
-  visualize.py [<months>]
-  visualize.py [<start> <months>]
-  visualize.py [--start=<date> --months=<num>]
-  visualize.py [<start> <end>]
-  visualize.py [--start=<date> --end=<date>]
+  visualize.py [<months>] [-v | --verbose]
+  visualize.py [<start> <months>] [-v | --verbose]
+  visualize.py [--start=<date> --months=<num>] [-v | --verbose]
+  visualize.py [<start> <end>] [-v | --verbose]
+  visualize.py [--start=<date> --end=<date>] [-v | --verbose]
+  visualize.py
 
 Options:
   -h --help     Show this screen.
@@ -17,6 +18,7 @@ Options:
                 [default: tomorrow]
   --months=<n>  Number of months to visualize. [default: 3]
   --end=<date>  Visualization end date (End date will not be included in plot).
+  -v --verbose  Explain what is being done. 
 
 """
 from datetime import datetime
@@ -30,6 +32,7 @@ from datetime import timedelta
 import operator
 from pylab import plot, bar, show, xticks
 import daily_json_to_dict
+import logging
 
 def add_bars( list_x_index, list_bar_vals, outline=False, color=None, width=0.8):
     # function to add a set of bars to our pylab plot
@@ -108,6 +111,8 @@ if __name__ == "__main__":
     forecast_start = datetime.now()+timedelta(days=1) #default: tomorrow
     forecast_xend = forecast_start+relativedelta(months=3)
     arguments = docopt(__doc__) #process command line arguments
+    if arguments['--verbose']:
+        logging.basicConfig(level=logging.DEBUG)
     if arguments['<start>'] is not None: #get start date
         forecast_start = parse(arguments['<start>'])
     if arguments['--start'] is not None:
