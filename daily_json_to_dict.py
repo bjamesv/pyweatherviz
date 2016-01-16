@@ -5,14 +5,27 @@ import json
 import pandas as pd
 import logging
 
+map_ghcn_by_date_tuple = {}
+#dictionary, caching fully downloaded/parsed GHCN in memory 
+
 def get_ncei_daily_climate_dicts( date_start, date_xend):
     """
     obtain daily Global Historical Climatology Network data, via disk cache
     or NCEI web API registered developer token.
     """
-    list_raw_dicts = _get_list_ncei_daily_climate( date_start, date_xend)
-    # build dicts, & return the collection.
-    return _get_daily_climate_dicts( list_raw_dicts)
+    # get climate dict from this module's in-memory cache
+    requested_period = (date_start,date_xend)
+    try:
+        ghcn_rows = map_ghcn_by_date_tuple[ requested_period ]
+        logging.info('Using inmemory NCEI data: {}'.format(requested_period))
+    except KeyError:
+        # fall back to disk cache, or NCEI RESTful api
+        list_raw_dicts = _get_list_ncei_daily_climate( date_start, date_xend)
+        # build dicts, & return the collection.
+        ghcn_rows = _get_daily_climate_dicts( list_raw_dicts)
+        # add to module's in-memory cache
+        map_ghcn_by_date_tuple[ requested_period] = ghcn_rows
+    return ghcn_rows
 
 def _get_list_ncei_daily_climate( date_start, date_xend):
     """

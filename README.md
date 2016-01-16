@@ -34,6 +34,6 @@ Top-to-bottom, black, vertical bars represent Saturdays in 2016 over the visuali
  - [x] Deprecate use of 15min precip CSV data (supplements 2013 data gaps, but slows script execution)
  - [ ] Improve visualization of missing data
  - [ ] Reduce code duplication
- - [ ] Optimize repeated opening/reading of NCEI cache files while plotting. 
+ - [x] Optimize repeated opening/reading of NCEI cache files while plotting. 
 
 Copyright (C) 2015, 2016 Brandon J. Van Vaerenbergh
