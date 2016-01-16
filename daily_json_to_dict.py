@@ -33,7 +33,10 @@ datasetid=GHCND&stationid=GHCND:USC00205567\
       list_json_response = json.load( cache)
     except FileNotFoundError:
       url_req = url.format( **dict_range)
-      list_json_response = requests.get( url_req, headers=token).json().get('results')
+      # default requests behavior for connect timeout (infinte wait?) was no
+      # good on a poorly configured IPv6 network (many, dead routes)
+      max_s = (5,45) #docs.python-requests.org/en/latest/user/advanced/#timeouts
+      list_json_response = requests.get( url_req, headers=token, timeout=max_s).json().get('results')
       json.dump( list_json_response, open( file_cache, 'w'))
     return list_json_response
 
