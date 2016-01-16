@@ -168,9 +168,11 @@ if __name__ == "__main__":
         add_daily_climate_bars( **dict_args)
 
     # add bar plots for Precipitation in CM
-    list_year_color_tuple = [ (4,'#ffeedd') #very faded orange
-                             ,(3,'#ffeebb') #faded orange
-                             ,(2,'#ffee77') #slighty faded orange
+    list_year_color_tuple = [ (6,'#ffee11') #very faded orange
+                             ,(5,'#ffee33') #very faded orange
+                             ,(4,'#ffee55') #very faded orange
+                             ,(3,'#ffee77') #faded orange
+                             ,(2,'#ffeebb') #slighty faded orange
                              ,(1,'#ffeeff') #orange
                             ]
     for rain_year_hist_offset,str_color in list_year_color_tuple:
@@ -193,7 +195,9 @@ if __name__ == "__main__":
     add_bars( x_dates, saturdays, outline=True, color='black', width=0.2)
 
     # plot lines for daily climate Min. temp. values
-    list_year_color_tuple = [ (4,"#ccccff") #very faded blue
+    list_year_color_tuple = [ (6,"#eeeeff") #very faded blue
+                             ,(5,"#ddddff") #very faded blue
+                             ,(4,"#ccccff") #very faded blue
                              ,(3,"#9999ff") #faded blue
                              ,(2,"#5555ff") #only slightly faded
                              ,(1,"#0000ff") #pure blue
