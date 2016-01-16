@@ -46,11 +46,15 @@ def _get_daily_climate_dicts( list_daily_climate):
     Historical Climatolody Network data.
 
     >>> l = [{'date':'2013-01-01T00:00:00','datatype':'TMAX','value':25}\
-            ,{'date':'2013-01-01T00:00:00','datatype':'SNWD','value':175}]
+            ,{'date':'2013-01-01T00:00:00','datatype':'SNWD','value':175}\
+            ,{'date':'2013-01-01T00:00:00','datatype':'PRCP','value':90}]
     >>> out = _get_daily_climate_dicts( l)
     >>> from pprint import pprint
     >>> pprint( out)
-    [{'DATE': datetime.datetime(2013, 1, 1, 0, 0), 'SNWD_MM': 175, 'TMAX_C': 2.5}]
+    [{'DATE': datetime.datetime(2013, 1, 1, 0, 0),
+      'PRCP_MM': 9.0,
+      'SNWD_MM': 175,
+      'TMAX_C': 2.5}]
     """
     list_one_row_per_day = []
     df_by_date = pd.DataFrame(list_daily_climate).groupby('date')
