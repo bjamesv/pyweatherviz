@@ -35,7 +35,7 @@ datasetid=GHCND&stationid=GHCND:USC00205567\
       list_json_response = json.load( cache)
     except FileNotFoundError:
       url_req = url.format( **dict_range)
-      msg = 'Local NCIE cache ({}) not found, downloading: ({})'
+      msg = 'Local NCEI cache ({}) not found, downloading: ({})'
       logging.info(msg.format(file_cache,url_req))
       # default requests behavior for connect timeout (infinte wait?) was no
       # good on a poorly configured IPv6 network (many, dead routes)
